@@ -31,19 +31,13 @@ cd cisco-iosvl2-vagrant-libvirt
 
 2. Log in and download the IOSvL2 disk image file from your [Cisco VIRL](http://virl.cisco.com) account.
 
-3. Rename the IOSvL2 disk image file.
+3. Copy (and rename) the disk image file to the `/var/lib/libvirt/images` directory.
 
 ```
-mv $HOME/Downloads/vios_l2-adventerprisek9-m.SSA.high_iron_20180619.qcow2 $HOME/Downloads/cisco-iosvl2.qcow2
+sudo cp $HOME/Downloads/vios_l2-adventerprisek9-m.SSA.high_iron_20180619.qcow2 /var/lib/libvirt/images/cisco-iosvl2.qcow2
 ```
 
-4. Copy the IOSvL2 disk image file to the `/var/lib/libvirt/images` directory.
-
-```
-sudo cp $HOME/Downloads/cisco-iosvl2.qcow2 /var/lib/libvirt/images
-```
-
-5. Modify the file ownership and permissions. Note the owner will differ between Linux distributions. A couple of examples:
+4. Modify the file ownership and permissions. Note the owner will differ between Linux distributions. A couple of examples:
 
 > Arch Linux
 ```
@@ -57,20 +51,20 @@ sudo chown libvirt-qemu:kvm /var/lib/libvirt/images/cisco-iosvl2.qcow2
 sudo chmod u+x /var/lib/libvirt/images/cisco-iosvl2.qcow2
 ```
 
-6. Start the `vagrant-libvirt` network (if not already started).
+5. Start the `vagrant-libvirt` network (if not already started).
 
 ```
 virsh -c qemu:///system net-list
 virsh -c qemu:///system net-start vagrant-libvirt
 ```
 
-7. Run the Ansible playbook. 
+6. Run the Ansible playbook. 
 
 ```
 ansible-playbook main.yml
 ```
 
-8. Add the Vagrant box. 
+7. Add the Vagrant box. 
 
 ```
 vagrant box add --provider libvirt --name cisco-iosvl2-15.2.1 ./cisco-iosvl2.box
