@@ -1,11 +1,13 @@
+# Cisco IOSvL2 Vagrant box (libvirt)
+
 A procedure for creating a Cisco IOSvL2 Vagrant box for the [libvirt](https://libvirt.org) provider.
 
 ## Prerequisites
 
-  * [Cisco VIRL](http://virl.cisco.com) account
+  * [Cisco Modeling Labs - Personal](https://learningnetworkstore.cisco.com/cisco-modeling-labs-personal) subscription
   * [Git](https://git-scm.com)
   * [Python](https://www.python.org)
-  * [Ansible](https://docs.ansible.com/ansible/latest/index.html)
+  * [Ansible](https://docs.ansible.com/ansible/latest/index.html) >= 2.7
   * [libvirt](https://libvirt.org) with client tools
   * [QEMU](https://www.qemu.org)
   * [Expect](https://en.wikipedia.org/wiki/Expect)
@@ -15,68 +17,114 @@ A procedure for creating a Cisco IOSvL2 Vagrant box for the [libvirt](https://li
 
 ## Steps
 
-0. Verify the prerequisite tools are installed.
+0\. Verify the prerequisite tools are installed.
 
-```
-which git python ansible libvirtd virsh qemu-system-x86_64 expect telnet vagrant
-vagrant plugin list
-```
+<pre>
+$ <b>which git python ansible libvirtd virsh qemu-system-x86_64 expect telnet vagrant</b>
+$ <b>vagrant plugin list</b>
+vagrant-libvirt (0.2.1, global)
+</pre>
 
-1. Clone this GitHub repo and _cd_ into the directory.
+1\. Log in and download the CML-P reference platform ISO file to your `Downloads` directory.
 
-```
-git clone https://github.com/mweisel/cisco-iosvl2-vagrant-libvirt
-cd cisco-iosvl2-vagrant-libvirt
-```
+2\. Create a mount point directory.
 
-2. Log in and download the IOSvL2 disk image file from your [Cisco VIRL](http://virl.cisco.com) account.
+<pre>
+$ <b>sudo mkdir /mnt/iso</b>
+</pre>
 
-3. Copy (and rename) the disk image file to the `/var/lib/libvirt/images` directory.
+3\. Mount the ISO file.
 
-```
-sudo cp $HOME/Downloads/vios_l2-adventerprisek9-m.SSA.high_iron_20180619.qcow2 /var/lib/libvirt/images/cisco-iosvl2.qcow2
-```
+<pre>
+$ <b>cd $HOME/Downloads</b>
+$ <b>sudo mount -o loop refplat-20200409-fcs.iso /mnt/iso</b>
+</pre>
 
-4. Modify the file ownership and permissions. Note the owner will differ between Linux distributions. A couple of examples:
+4\. Copy (and rename) the Cisco IOSvL2 disk image file to the `/var/lib/libvirt/images` directory.
+
+<pre>
+$ <b>sudo cp /mnt/iso/virl-base-images/iosvl2-2019/vios_l2-adventerprisek9-m.ssa.high_iron_20190423.qcow2 /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
+</pre>
+
+5\. Unmount the ISO file.
+
+<pre>
+$ <b>sudo umount /mnt/iso</b>
+</pre>
+
+6\. Modify the file ownership and permissions. Note the owner may differ between Linux distributions.
 
 > Arch Linux
-```
-sudo chown nobody:kvm /var/lib/libvirt/images/cisco-iosvl2.qcow2
-sudo chmod u+x /var/lib/libvirt/images/cisco-iosvl2.qcow2
-```
+
+<pre>
+$ <b>sudo chown nobody:kvm /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
+$ <b>sudo chmod u+x /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
+</pre>
 
 > Ubuntu 18.04
-```
-sudo chown libvirt-qemu:kvm /var/lib/libvirt/images/cisco-iosvl2.qcow2
-sudo chmod u+x /var/lib/libvirt/images/cisco-iosvl2.qcow2
-```
 
-5. Start the `vagrant-libvirt` network (if not already started).
+<pre>
+$ <b>sudo chown libvirt-qemu:kvm /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
+$ <b>sudo chmod u+x /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
+</pre>
 
-```
-virsh -c qemu:///system net-list
-virsh -c qemu:///system net-start vagrant-libvirt
-```
+7\. Create the `boxes` directory.
 
-6. Run the Ansible playbook. 
+<pre>
+$ <b>mkdir $HOME/boxes</b>
+</pre>
 
-```
-ansible-playbook main.yml
-```
+8\. Start the `vagrant-libvirt` network (if not already started).
 
-7. Add the Vagrant box. 
+<pre>
+$ <b>virsh -c qemu:///system net-list</b>
+$ <b>virsh -c qemu:///system net-start vagrant-libvirt</b>
+</pre>
 
-```
-vagrant box add --provider libvirt --name cisco-iosvl2-15.2.1 ./cisco-iosvl2.box
-```
+9\. Clone this GitHub repo and _cd_ into the directory.
+
+<pre>
+$ <b>git clone https://github.com/mweisel/cisco-iosvl2-vagrant-libvirt</b>
+$ <b>cd cisco-iosvl2-vagrant-libvirt</b>
+</pre>
+
+10\. Run the Ansible playbook.
+
+<pre>
+$ <b>ansible-playbook main.yml</b>
+</pre>
+
+11\. Copy (and rename) the Vagrant box artifact to the `boxes` directory.
+
+<pre>
+$ <b>cp cisco-iosvl2.box $HOME/boxes/cisco-iosvl2-2019.box</b>
+</pre>
+
+12\. Replace the `HOME` placeholder string in the box metadata file.
+
+<pre>
+$ <b>grep url ./files/cisco-iosvl2.json | sed 's/^ *//'</b>
+"url": "file://HOME/boxes/cisco-iosvl2-2019.box"
+
+$ <b>sed -i "s|HOME|${HOME}|" ./files/cisco-iosvl2.json</b>
+
+$ <b>grep url ./files/cisco-iosvl2.json | sed 's/^ *//'</b>
+"url": "file:///home/marc/boxes/cisco-iosvl2-2019.box"
+</pre>
+
+13\. Add the Vagrant box to the local inventory.
+
+<pre>
+$ <b>vagrant box add ./files/cisco-iosvl2.json</b>
+</pre>
 
 ## Debug
 
-To view the telnet session output for the `expect` task:
+View the telnet session output for the `expect` task:
 
-```
-tail -f ~/iosvl2-console.explog
-```
+<pre>
+$ <b>tail -f ~/iosvl2-console.explog</b>
+</pre>
 
 ## License
 

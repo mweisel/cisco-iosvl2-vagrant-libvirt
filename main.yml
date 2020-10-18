@@ -1,4 +1,4 @@
-- name: create cisco iosv vagrant box
+- name: create cisco iosvl2 vagrant box
   hosts: localhost
   gather_facts: no
 
@@ -55,4 +55,3 @@
       script: create_box.sh ./files/{{ disk_image_name }}
       args:
         executable: bash
-
