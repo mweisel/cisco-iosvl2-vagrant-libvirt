@@ -54,17 +54,17 @@ $ <b>sudo umount /mnt/iso</b>
 
 6\. Modify the file ownership and permissions. Note the owner may differ between Linux distributions.
 
-> Arch Linux
-
-<pre>
-$ <b>sudo chown nobody:kvm /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
-$ <b>sudo chmod u+x /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
-</pre>
-
 > Ubuntu 18.04
 
 <pre>
 $ <b>sudo chown libvirt-qemu:kvm /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
+$ <b>sudo chmod u+x /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
+</pre>
+
+> Arch Linux
+
+<pre>
+$ <b>sudo chown nobody:kvm /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
 $ <b>sudo chmod u+x /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
 </pre>
 
@@ -100,22 +100,34 @@ $ <b>ansible-playbook main.yml</b>
 $ <b>cp cisco-iosvl2.box $HOME/boxes/cisco-iosvl2-2019.box</b>
 </pre>
 
-12\. Replace the `HOME` placeholder string in the box metadata file.
+12\. Copy the box metadata file to the `boxes` directory.
 
 <pre>
-$ <b>grep url ./files/cisco-iosvl2.json | sed 's/^ *//'</b>
-"url": "file://HOME/boxes/cisco-iosvl2-2019.box"
-
-$ <b>sed -i "s|HOME|${HOME}|" ./files/cisco-iosvl2.json</b>
-
-$ <b>grep url ./files/cisco-iosvl2.json | sed 's/^ *//'</b>
-"url": "file:///home/marc/boxes/cisco-iosvl2-2019.box"
+$ <b>cp ./files/cisco-iosvl2.json $HOME/boxes/</b>
 </pre>
 
-13\. Add the Vagrant box to the local inventory.
+13\. Change the current working directory to `boxes`.
 
 <pre>
-$ <b>vagrant box add ./files/cisco-iosvl2.json</b>
+$ <b>cd $HOME/boxes</b>
+</pre>
+
+14\. Replace the `HOME` placeholder string in the box metadata file.
+
+<pre>
+$ <b>awk '/url/{gsub(/^ */,"");print}' cisco-iosvl2.json</b>
+"url": "file://<b>HOME</b>/boxes/cisco-iosvl2-2019.box"
+
+$ <b>sed -i "s|HOME|${HOME}|" cisco-iosvl2.json</b>
+
+$ <b>awk '/url/{gsub(/^ */,"");print}' cisco-iosvl2.json</b>
+"url": "file://<b>/home/marc</b>/boxes/cisco-iosvl2-2019.box"
+</pre>
+
+15\. Add the Vagrant box to the local inventory.
+
+<pre>
+$ <b>vagrant box add cisco-iosvl2.json</b>
 </pre>
 
 ## Debug
