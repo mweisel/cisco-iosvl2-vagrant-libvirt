@@ -14,8 +14,10 @@ A procedure for creating a Cisco IOSvL2 Vagrant box for the [libvirt](https://li
   * [QEMU](https://www.qemu.org)
   * [Expect](https://en.wikipedia.org/wiki/Expect)
   * [Telnet](https://en.wikipedia.org/wiki/Telnet)
-  * [Vagrant](https://www.vagrantup.com) <= 2.2.9
+  * [Vagrant](https://www.vagrantup.com) >= 2.2.10
   * [vagrant-libvirt](https://github.com/vagrant-libvirt/vagrant-libvirt)
+
+> Vagrant version **2.2.16** introduced a bug that *breaks* SSH connectivity - [#12344](https://github.com/hashicorp/vagrant/issues/12344)
 
 ## Steps
 
@@ -24,7 +26,7 @@ A procedure for creating a Cisco IOSvL2 Vagrant box for the [libvirt](https://li
 <pre>
 $ <b>which git python ansible libvirtd virsh qemu-system-x86_64 expect telnet vagrant</b>
 $ <b>vagrant plugin list</b>
-vagrant-libvirt (0.4.0, global)
+vagrant-libvirt (0.4.1, global)
 </pre>
 
 1\. Log in and download the CML-P reference platform ISO file to your `Downloads` directory.
@@ -39,7 +41,7 @@ $ <b>sudo mkdir -p /mnt/iso</b>
 
 <pre>
 $ <b>cd $HOME/Downloads</b>
-$ <b>sudo mount -o loop refplat-20201020-fcs.iso /mnt/iso</b>
+$ <b>sudo mount -o loop refplat-20201110-fcs.iso /mnt/iso</b>
 </pre>
 
 4\. Copy (and rename) the Cisco IOSvL2 disk image file to the `/var/lib/libvirt/images` directory.
