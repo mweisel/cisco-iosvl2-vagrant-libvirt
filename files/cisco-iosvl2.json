@@ -3,11 +3,11 @@
   "description": "This box contains the Cisco IOSv L2 Switch.",
   "versions": [
     {
-      "version": "2019",
+      "version": "2020",
       "providers": [
         {
           "name": "libvirt",
-          "url": "file://HOME/boxes/cisco-iosvl2-2019.box"
+          "url": "file://HOME/boxes/cisco-iosvl2-2020.box"
         }
       ]
     }

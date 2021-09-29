@@ -14,10 +14,8 @@ A procedure for creating a Cisco IOSvL2 Vagrant box for the [libvirt](https://li
   * [QEMU](https://www.qemu.org)
   * [Expect](https://en.wikipedia.org/wiki/Expect)
   * [Telnet](https://en.wikipedia.org/wiki/Telnet)
-  * [Vagrant](https://www.vagrantup.com) >= 2.2.10
+  * [Vagrant](https://www.vagrantup.com) >= 2.2.10, != 2.2.16
   * [vagrant-libvirt](https://github.com/vagrant-libvirt/vagrant-libvirt)
-
-> Vagrant version **2.2.16** introduced a bug that *breaks* SSH connectivity - [#12344](https://github.com/hashicorp/vagrant/issues/12344)
 
 ## Steps
 
@@ -41,13 +39,13 @@ $ <b>sudo mkdir -p /mnt/iso</b>
 
 <pre>
 $ <b>cd $HOME/Downloads</b>
-$ <b>sudo mount -o loop refplat-20201110-fcs.iso /mnt/iso</b>
+$ <b>sudo mount -o loop refplat-20210511-fcs.iso /mnt/iso</b>
 </pre>
 
 4\. Copy (and rename) the Cisco IOSvL2 disk image file to the `/var/lib/libvirt/images` directory.
 
 <pre>
-$ <b>sudo cp /mnt/iso/virl-base-images/iosvl2-2019/vios_l2-adventerprisek9-m.ssa.high_iron_20190423.qcow2 /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
+$ <b>sudo cp /mnt/iso/virl-base-images/iosvl2-2020/vios_l2-adventerprisek9-m.ssa.high_iron_20200929.qcow2 /var/lib/libvirt/images/cisco-iosvl2.qcow2</b>
 </pre>
 
 5\. Unmount the ISO file.
@@ -101,7 +99,7 @@ $ <b>ansible-playbook main.yml</b>
 11\. Copy (and rename) the Vagrant box artifact to the `boxes` directory.
 
 <pre>
-$ <b>cp cisco-iosvl2.box $HOME/boxes/cisco-iosvl2-2019.box</b>
+$ <b>cp cisco-iosvl2.box $HOME/boxes/cisco-iosvl2-2020.box</b>
 </pre>
 
 12\. Copy the box metadata file to the `boxes` directory.
@@ -120,12 +118,12 @@ $ <b>cd $HOME/boxes</b>
 
 <pre>
 $ <b>awk '/url/{gsub(/^ */,"");print}' cisco-iosvl2.json</b>
-"url": "file://<b>HOME</b>/boxes/cisco-iosvl2-2019.box"
+"url": "file://<b>HOME</b>/boxes/cisco-iosvl2-2020.box"
 
 $ <b>sed -i "s|HOME|${HOME}|" cisco-iosvl2.json</b>
 
 $ <b>awk '/url/{gsub(/^ */,"");print}' cisco-iosvl2.json</b>
-"url": "file://<b>/home/marc</b>/boxes/cisco-iosvl2-2019.box"
+"url": "file://<b>/home/marc</b>/boxes/cisco-iosvl2-2020.box"
 </pre>
 
 15\. Add the Vagrant box to the local inventory.
